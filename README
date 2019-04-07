@@ -1,0 +1,80 @@
+******************
+* DoubleLinkedList
+* CS221
+* 2019-04-07
+* Benjamin Warner
+******************
+
+OVERVIEW:
+
+This program implements the IndexedUnsortedList interface using a
+Double Linked List implementation.
+
+
+INCLUDED FILES:
+
+* DoubleNode.java - helper class for the double linked list implementation
+* IndexedUnsortedList.java - IndexedUnsortedList interface that was implemented
+* IUDoubleLinkedList.java - the source code that implements the IndexedUnsortedList interface
+* ListTester.java - unit tests for the IUDoubleLinkedList implementation
+
+
+COMPILING AND RUNNING:
+
+From the directory that contains all source files, compile the tester class
+with the following command:
+$ javac ListTester.java
+
+To run the tester, use the command:
+$ java ListTester
+
+
+PROGRAM DESIGN AND IMPORTANT CONCEPTS:
+
+The main concept to understand of this data structure is how the double linked list works.
+In a double linked list, each node in the list has a reference to the next node, and the previous
+node. The class DoubleNode serves this purpose, having helper methods to access the next and previous
+nodes.
+
+The IUDoubleLinkedList class uses the DoubleNode to build up a link of elements. Additionally, it
+implements the interface defined in IndexedUnsortedList. The main thing to take into account with
+linked lists, is how looping is different from that of an array. In order to loop through all the
+elements in a double linked list, you must make use of the references the double node has to the next
+elements in the chain.
+
+ListTester is a giant test runner. There are over 2000 test cases that get run when invoked. This seems
+absurd to me, and if I could change it, I would make it so that there test suites per method of the
+IUDoubleLinked list instead of using the exhaustive coverage that ListTester employs. That would make
+it easier to understand what each method should be doing and reduce the noise.
+
+
+TESTING:
+
+ListTester has been in development for several months and has been used to test other implementations
+of the IndexedUnsortedList. It was first written by the Boise State computer science department, but it
+didn't contain the number of test cases that it does now. As I've gone through different implementations
+for the IndexedUnsortedList, I've added other test cases to ensure that the implementation works as expected.
+
+Test cases were defined based on how the methods should work as outlined in the IndexedUnsortedList interface.
+
+As of right now, the data structure passes all the tests that have been defined. This doesn't guarantee that
+it's idiot proof, but since there's over 2000 test cases, I'd say that it's probably pretty good.
+
+
+DISCUSSION:
+
+The only real issue encountered while working on this project was the testing of the list iterator. Because
+each test case simply reports on whether or not the test failed and not what the expected result was or even
+the result gotten, it made tracking down issues with the implementation more painful than it needed to be.
+
+Additionally, because ListTester is exhaustive, it made finding certain test cases more difficult than it needed
+to be (this is why having separate tests per method would, first of all, make testing better anyways, because it
+would guarantee that the method works, but also the test results would be much clearer as to why the test failed).
+
+Not only that, but an exhaustive testing approach doesn't really prove that the code works (in my opinion at least).
+All it really says is "I wrote over 2000 test cases and my code passes all of them!" but it doesn't mean that the
+data structure works in all situations.
+
+Overall, this project wasn't super challenging. I think it only took me like an hour to get most of the implementation
+and the rest of the time was spent on cleaning up little gotcha's involving the list iterator and the data structure
+itself.
