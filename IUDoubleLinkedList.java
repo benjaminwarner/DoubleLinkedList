@@ -12,21 +12,21 @@ import java.util.NoSuchElementException;
  * @param <T> store data of type T
  */
 
- public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
-     private DoubleNode<T> head, tail;
-     private int size;
-     private int modCount;
+public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
+    private DoubleNode<T> head, tail;
+    private int size;
+    private int modCount;
 
      /**
-      * Creates an empty list
-      */
-      public IUDoubleLinkedList() {
-          this.head = null;
-          this.tail = null;
-          this.size = 0;
-          this.modCount = 0;
-      }
-
+     * Creates an empty list
+     */
+    public IUDoubleLinkedList() {
+        this.head = null;
+        this.tail = null;
+        this.size = 0;
+        this.modCount = 0;
+	}
+	  
     @Override
 	public void addToFront(T element) {
 		if (isEmpty()) {
@@ -128,7 +128,7 @@ import java.util.NoSuchElementException;
 			throw new NoSuchElementException();
         T element = head.getElement();
         if (size > 1)
-            head.getNext().setPrevious(null);
+			head.getNext().setPrevious(null);
 		head = head.getNext();
 		--size;
 		++modCount;
@@ -141,8 +141,10 @@ import java.util.NoSuchElementException;
             throw new NoSuchElementException();
         T element = tail.getElement();
         if (size > 1)
-            tail.getPrevious().setNext(null);
-        tail = tail.getPrevious();
+			tail.getPrevious().setNext(null);
+		else if (size == 1)
+			head = null;
+	    tail = tail.getPrevious();
         --size;
         ++modCount;
         return element;
@@ -225,6 +227,7 @@ import java.util.NoSuchElementException;
 		for (int i = 0; i < index; ++i)
 			current = current.getNext();
 		current.setElement(element);
+		++modCount;
 	}
 
 	@Override
@@ -340,15 +343,17 @@ import java.util.NoSuchElementException;
         }
 
         public ImplementedListIterator(int startingIndex) {
-            if (startingIndex >= size || startingIndex < 0)
-                throw new IndexOutOfBoundsException();
+			if (startingIndex < 0 || startingIndex > size)
+				throw new IndexOutOfBoundsException();
             nextNode = IUDoubleLinkedList.this.getNode(startingIndex);
             previousNode = IUDoubleLinkedList.this.getNode(startingIndex - 1);
             iterModCount = modCount;
-        }
-
+		}
+		
         @Override
         public void add(T e) {
+			if (iterModCount != modCount)
+				throw new ConcurrentModificationException();
             IUDoubleLinkedList.this.add(e);
             ++iterModCount;
         }
@@ -387,7 +392,7 @@ import java.util.NoSuchElementException;
 
         @Override
         public T previous() {
-            if (!hasPrevious())
+			if (!hasPrevious())
                 throw new NoSuchElementException();
             T element = previousNode.getElement();
             nextNode = previousNode;
@@ -398,15 +403,17 @@ import java.util.NoSuchElementException;
 
         @Override
         public int previousIndex() {
-            if (!hasPrevious())
+			if (!hasPrevious())
                 return -1;
-            return IUDoubleLinkedList.this.indexOf(nextNode.getPrevious().getElement());
+            return IUDoubleLinkedList.this.indexOf(previousNode.getElement());
         }
 
         @Override
         public void remove() {
-            if (lastAccessedNode == null)
-                throw new IllegalStateException();
+			if (iterModCount != modCount)
+				throw new ConcurrentModificationException();
+            else if (lastAccessedNode == null)
+				throw new IllegalStateException();
             IUDoubleLinkedList.this.remove(lastAccessedNode.getElement());
             lastAccessedNode = null;
             ++iterModCount;
@@ -414,9 +421,13 @@ import java.util.NoSuchElementException;
 
         @Override
         public void set(T element) {
-            if (lastAccessedNode == null)
+			if (iterModCount != modCount)
+				throw new ConcurrentModificationException();
+            else if (lastAccessedNode == null)
                 throw new IllegalStateException();
-            lastAccessedNode.setElement(element);
+			lastAccessedNode.setElement(element);
+			++iterModCount;
+			++modCount;
         }
     }
 
